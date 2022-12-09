@@ -6,42 +6,38 @@
 #    By: fsandel <fsandel@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/08 09:53:10 by fsandel           #+#    #+#              #
-#    Updated: 2022/12/03 16:35:56 by fsandel          ###   ########.fr        #
+#    Updated: 2022/12/09 19:49:27 by fsandel          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME			= pipex
 CC				= cc
 RM				= rm -f
-CFLAGS			= -Wall -Wextra -Werror
+CFLAGS			= #-Wall -Wextra -Werror
 
-OBJ_DIR			= obj
-OBJ_FILES		= $(SRC_FILES:.c=.o)
-OBJ				= $(addprefix $(OBJ_DIR)/, $(OBJ_FILES))
+
+OBJ				= $(SRC:.c=.o)
 
 LIBFT_DIR		= libft
 LIBFT_LIB		= libft.a
 LIBFT			= $(LIBFT_DIR)/$(LIBFT_LIB)
 LIBFT_GIT		= https://github.com/fsandel/libft
 
+SRC				= main.c utils.c
 
-SRC_DIR			= src
-SRC				= $(addprefix $(SRC_DIR)/, $(SRC_FILES))
-SRC_FILES		= main.c
-
-$(NAME): $(LIBFT) $(OBJ)
-				@$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME)
-
-$(OBJ): $(SRC)
-				@mkdir -p $(OBJ_DIR)
-				@$(CC) $(CFLAGS) -c $(SRC) -o $(OBJ)
+HDR				= pipex.h
 
 
-all:			$(NAME)
+all:			$(LIBFT) $(NAME)
+
+$(NAME):$(OBJ)
+	$(CC) $^ $(LIBFT) -o $@ $(CFLAGS)
+
+$(OBJ):$(SRC)
+	$(CC) -c $^ $(CFLAGS)
 
 clean:
 				@$(RM) $(OBJ)
-				@rmdir $(OBJ_DIR)
 				@make clean -C $(LIBFT_DIR)
 
 fclean:			
@@ -54,6 +50,10 @@ re:
 				make all
 
 libft:			$(LIBFT)
+
+test:
+				@echo $(OBJ)
+				@echo $(SRC)
 
 $(LIBFT):
 				make clone_libft
