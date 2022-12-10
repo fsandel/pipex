@@ -6,7 +6,7 @@
 /*   By: fsandel <fsandel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/03 16:33:20 by fsandel           #+#    #+#             */
-/*   Updated: 2022/12/09 20:06:40 by fsandel          ###   ########.fr       */
+/*   Updated: 2022/12/10 11:49:50 by fsandel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # define SHELL_PATH "/bin/zsh"
 # define STDIN 0
 # define STDOUT 1
+# define TEMP_FILE "tmp.txt"
 
 char	*ft_strjoin_free(char *first, char *second);
 char	*read_file(int fd);
