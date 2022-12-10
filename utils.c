@@ -6,7 +6,7 @@
 /*   By: fsandel <fsandel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/09 19:20:52 by fsandel           #+#    #+#             */
-/*   Updated: 2022/12/10 12:06:16 by fsandel          ###   ########.fr       */
+/*   Updated: 2022/12/10 17:39:44 by fsandel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,6 @@ void	input_test(int argc, char *argv[])
 		error_close('c', -1);
 	if (access(argv[1], R_OK) && ft_strncmp(argv[1], "here_doc", 9))
 		error_close('i', -1);
-	if (access(argv[argc - 1], W_OK))
-		error_close('o', -1);
 	if (!ft_strncmp(argv[1], "here_doc", 9) && argc < 6)
 		error_close('b', -1);
 }
@@ -80,6 +78,8 @@ void	error_close(char c, int fd)
 		perror("not enough arguments for bonus");
 	else if (c == 't')
 		perror("couldnt create tmp file");
+	else if (c == 'F')
+		perror("open of input failed");
 	else
 		perror("random error");
 	exit(1);

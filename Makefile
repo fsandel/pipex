@@ -6,14 +6,14 @@
 #    By: fsandel <fsandel@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/08 09:53:10 by fsandel           #+#    #+#              #
-#    Updated: 2022/12/09 19:49:27 by fsandel          ###   ########.fr        #
+#    Updated: 2022/12/10 18:40:14 by fsandel          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME			= pipex
 CC				= cc
 RM				= rm -f
-CFLAGS			= #-Wall -Wextra -Werror
+CFLAGS			= -Wall -Wextra -Werror
 
 
 OBJ				= $(SRC:.c=.o)
@@ -31,10 +31,10 @@ HDR				= pipex.h
 all:			$(LIBFT) $(NAME)
 
 $(NAME):$(OBJ)
-	$(CC) $^ $(LIBFT) -o $@ $(CFLAGS)
+	$(CC) $(OBJ) $(LIBFT) -o $@ $(CFLAGS)
 
-$(OBJ):$(SRC)
-	$(CC) -c $^ $(CFLAGS)
+$(OBJ):$(SRC) $(HDR)
+	$(CC) -c $(SRC) $(CFLAGS)
 
 clean:
 				@$(RM) $(OBJ)
@@ -50,10 +50,6 @@ re:
 				make all
 
 libft:			$(LIBFT)
-
-test:
-				@echo $(OBJ)
-				@echo $(SRC)
 
 $(LIBFT):
 				make clone_libft

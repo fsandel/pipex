@@ -6,92 +6,96 @@
 /*   By: fsandel <fsandel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/03 16:32:58 by fsandel           #+#    #+#             */
-/*   Updated: 2022/12/10 12:06:23 by fsandel          ###   ########.fr       */
+/*   Updated: 2022/12/10 18:33:43 by fsandel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void	here_doc(int argc, char *argv[]);
-
-int	main(int argc, char *argv[])
+int	main(int argc, char *argv[], char **env)
 {
 	int		first_fd;
-	int		bonus;
 
 	input_test(argc, argv);
 	if (!ft_strncmp(argv[1], "here_doc", 9))
-	{
-		bonus = 2;
-		here_doc(argc, argv);
-		first_fd = open(TEMP_FILE, O_RDONLY);
-	}
+		first_fd = here_doc(argv);
 	else
-	{
-		bonus = 0;
 		first_fd = open(argv[1], O_RDONLY);
-	}
-	pipex(argc, argv, first_fd, bonus);
-	unlink(TEMP_FILE);
+	if (first_fd < 0)
+		error_close('F', -1);
+	pipex(argc, argv, first_fd, env);
 	return (0);
 }
 
-void	here_doc(int argc, char *argv[])
+int	here_doc(char *argv[])
 {
-	int		fd;
+	int		fd[2];
 	char	*temp;
+	char	*limiter;
 
-	if (!access(TEMP_FILE, F_OK))
-		unlink(TEMP_FILE);
-	close(open(TEMP_FILE, O_CREAT | O_WRONLY | O_TRUNC, S_IRUSR | S_IWUSR));
-	fd = open(TEMP_FILE, O_WRONLY);
-	if (fd < 0)
+	if (pipe(fd) < 0)
 		error_close('t', -1);
+	limiter = ft_strjoin(argv[2], "\n");
 	while (1)
 	{
-		temp = get_next_line(0);
-		if (!ft_strncmp(temp, argv[2], ft_strlen(argv[2])))
-		{
-			free(temp);
+		temp = get_next_line(STDIN);
+		if (temp == NULL)
 			break ;
-		}	
-		ft_putstr_fd(temp, fd);
+		if (!ft_strncmp(temp, limiter, ft_strlen(limiter)))
+			break ;
+		ft_putstr_fd(temp, fd[1]);
 		free(temp);
 	}
-	close(fd);
+	free(limiter);
+	free(temp);
+	close(fd[1]);
+	return (fd[0]);
 }
 
-void	pipex(int argc, char *argv[], int old_fd, int bonus)
+void	pipex(int argc, char *argv[], int fd, char **env)
 {
 	char	*output;
 	int		out_fd;
 	int		i;
-	int		new_fd;
+	int		bonus;
 
+	if (!ft_strncmp(argv[1], "here_doc", 9))
+		bonus = 1;
+	else
+		bonus = 0;
 	i = 2 + bonus;
 	while (i < argc - 1)
 	{
-		new_fd = execute_child(old_fd, argv[i++]);
-		close(old_fd);
-		old_fd = new_fd;
+		fd = execute_child(fd, argv[i++], env);
+		if (fd < 0)
+			error_close('e', fd);
 	}
 	waitpid(0, NULL, 0);
-	output = read_file(new_fd);
-	out_fd = open(argv[argc - 1], O_WRONLY);
+	output = read_file(fd);
+	out_fd = create_output_file(argc, argv, bonus);
 	if (output)
-		write(out_fd, output, ft_strlen(output));
+		ft_putstr_fd(output, out_fd);
 	free(output);
-	close(out_fd);
-	close(new_fd);
+	close(fd);
 }
 
-int	execute_child(int infd, char *cmd)
+int	create_output_file(int argc, char *argv[], int bonus)
+{
+	int	out_fd;
+
+	if (bonus)
+		out_fd = open(argv[argc - 1],
+				O_WRONLY | O_APPEND | O_CREAT | O_TRUNC, 00777);
+	else
+		out_fd = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 00777);
+	return (out_fd);
+}
+
+int	execute_child(int infd, char *cmd, char **env)
 {
 	int			fd[2];
 	pid_t		pid;
-	char *const	env[1] = {NULL};
 	char *const	args[4] = {SHELL_PATH, "-c", cmd, NULL};
-	int			debug;
 
 	if (pipe(fd))
 		error_close('p', infd);
@@ -106,10 +110,10 @@ int	execute_child(int infd, char *cmd)
 		close(fd[1]);
 		close(infd);
 		execve(SHELL_PATH, args, env);
+		return (-1);
 	}
 	else
-	{
 		close(fd[1]);
-		return (fd[0]);
-	}
+	close(infd);
+	return (fd[0]);
 }
