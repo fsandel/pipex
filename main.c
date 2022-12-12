@@ -6,7 +6,7 @@
 /*   By: fsandel <fsandel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/03 16:32:58 by fsandel           #+#    #+#             */
-/*   Updated: 2022/12/10 18:33:43 by fsandel          ###   ########.fr       */
+/*   Updated: 2022/12/12 10:04:06 by fsandel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,8 @@ void	pipex(int argc, char *argv[], int fd, char **env)
 	i = 2 + bonus;
 	while (i < argc - 1)
 	{
+		ft_putnbr_fd(fd, 2);
+		ft_putchar_fd('\n', 2);
 		fd = execute_child(fd, argv[i++], env);
 		if (fd < 0)
 			error_close('e', fd);
@@ -104,16 +106,15 @@ int	execute_child(int infd, char *cmd, char **env)
 		error_close('f', infd);
 	else if (pid == 0)
 	{
-		close(fd[0]);
 		dup2(fd[1], STDOUT);
 		dup2(infd, STDIN);
+		close(fd[0]);
 		close(fd[1]);
 		close(infd);
 		execve(SHELL_PATH, args, env);
 		return (-1);
 	}
-	else
-		close(fd[1]);
+	close(fd[1]);
 	close(infd);
 	return (fd[0]);
 }
