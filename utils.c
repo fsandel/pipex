@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fsandel <fsandel@student.42.fr>            +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/09 19:20:52 by fsandel           #+#    #+#             */
-/*   Updated: 2022/12/10 17:39:44 by fsandel          ###   ########.fr       */
+/*   Updated: 2022/12/14 20:27:36 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ char	*read_file(int fd)
 
 void	input_test(int argc, char *argv[])
 {
+	if ((argc != 5) && (BONUS == 0))
+		error_close('c', -1);
 	if (argc < 5)
 		error_close('c', -1);
 	if (access(argv[1], R_OK) && ft_strncmp(argv[1], "here_doc", 9))
@@ -67,7 +69,7 @@ void	error_close(char c, int fd)
 	else if (c == 'f')
 		perror("forking failed\n");
 	else if (c == 'c')
-		perror("not enough arguments\n");
+		perror("wrong amount of arguments\n");
 	else if (c == 'i')
 		perror("no access to infile");
 	else if (c == 'o')

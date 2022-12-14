@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fsandel <fsandel@student.42.fr>            +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/03 16:32:58 by fsandel           #+#    #+#             */
-/*   Updated: 2022/12/12 10:04:06 by fsandel          ###   ########.fr       */
+/*   Updated: 2022/12/14 20:25:52 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,8 +66,6 @@ void	pipex(int argc, char *argv[], int fd, char **env)
 	i = 2 + bonus;
 	while (i < argc - 1)
 	{
-		ft_putnbr_fd(fd, 2);
-		ft_putchar_fd('\n', 2);
 		fd = execute_child(fd, argv[i++], env);
 		if (fd < 0)
 			error_close('e', fd);
@@ -87,9 +85,9 @@ int	create_output_file(int argc, char *argv[], int bonus)
 
 	if (bonus)
 		out_fd = open(argv[argc - 1],
-				O_WRONLY | O_APPEND | O_CREAT | O_TRUNC, 00777);
+				O_WRONLY | O_APPEND | O_CREAT , 00644);
 	else
-		out_fd = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 00777);
+		out_fd = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 00644);
 	return (out_fd);
 }
 

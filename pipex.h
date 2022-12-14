@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fsandel <fsandel@student.42.fr>            +#+  +:+       +#+        */
+/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/03 16:33:20 by fsandel           #+#    #+#             */
-/*   Updated: 2022/12/10 18:40:41 by fsandel          ###   ########.fr       */
+/*   Updated: 2022/12/14 20:26:23 by florian          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,14 @@
 # include <fcntl.h>
 # include <stdio.h>
 
-# define SHELL_PATH "/bin/zsh"
+# define SHELL_PATH "/bin/bash"
+
 # define STDIN 0
 # define STDOUT 1
+
+# ifndef BONUS
+#  define BONUS 0
+# endif
 
 char	*ft_strjoin_free(char *first, char *second);
 char	*read_file(int fd);
