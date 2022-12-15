@@ -6,7 +6,7 @@
 /*   By: fsandel <fsandel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/03 16:33:20 by fsandel           #+#    #+#             */
-/*   Updated: 2022/12/15 13:31:34 by fsandel          ###   ########.fr       */
+/*   Updated: 2022/12/15 20:21:23 by fsandel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,14 +28,13 @@
 #  define BONUS 0
 # endif
 
-char	*ft_strjoin_free(char *first, char *second);
-char	*read_file(int fd);
 void	input_test(int argc, char *argv[]);
 void	error_exit(char *str, int exit_code, int fd);
-
-int		execute_child(int infd, char *cmd, char **env);
-void	pipex(int argc, char *argv[], int old_fd, char **env);
+void	dup_all(int in_out[2], int last, int pipefd);
 int		here_doc(char *argv[]);
+
+int		execute_child(int in_out[2], char *cmd, char **env, int last);
+void	pipex(int argc, char *argv[], int in_out[2], char **env);
 int		create_output_file(int argc, char *argv[], int here_doc);
 
 #endif

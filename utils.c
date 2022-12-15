@@ -6,46 +6,11 @@
 /*   By: fsandel <fsandel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/09 19:20:52 by fsandel           #+#    #+#             */
-/*   Updated: 2022/12/15 16:15:06 by fsandel          ###   ########.fr       */
+/*   Updated: 2022/12/15 20:40:43 by fsandel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-
-char	*ft_strjoin_free(char *first, char *second)
-{
-	char	*output;
-
-	if (!first)
-	{
-		first = ft_calloc(1, 1);
-		if (!first)
-			return (NULL);
-	}
-	output = ft_strjoin(first, second);
-	free(first);
-	return (output);
-}
-
-char	*read_file(int fd)
-{
-	char	*temp;
-	char	*long_map;
-
-	temp = get_next_line(fd);
-	if (!temp)
-		return (NULL);
-	long_map = ft_strdup(temp);
-	while (temp)
-	{
-		free(temp);
-		temp = get_next_line(fd);
-		if (!temp)
-			break ;
-		long_map = ft_strjoin_free(long_map, temp);
-	}
-	return (long_map);
-}
 
 void	input_test(int argc, char *argv[])
 {
@@ -58,6 +23,12 @@ void	input_test(int argc, char *argv[])
 		perror("pipex: input");
 		return ;
 	}
+	if (access(argv[argc - 1], W_OK) == -1 && access(argv[argc - 1]
+			, F_OK) == 0 && ft_strncmp(argv[1], "here_doc", 9))
+	{
+		perror("pipex: output");
+		return ;
+	}
 	if (!ft_strncmp(argv[1], "here_doc", 9) && argc < 6)
 		error_exit("not enough arguments for here_doc", 0, -1);
 }
@@ -68,4 +39,29 @@ void	error_exit(char *str, int exit_code, int fd)
 		close(fd);
 	perror(str);
 	exit(exit_code);
+}
+
+int	here_doc(char *argv[])
+{
+	int		fd[2];
+	char	*temp;
+	char	*limiter;
+
+	if (pipe(fd) < 0)
+		error_exit("piping failed", 0, -1);
+	limiter = ft_strjoin(argv[2], "\n");
+	while (1)
+	{
+		temp = get_next_line(STDIN);
+		if (temp == NULL)
+			break ;
+		if (!ft_strncmp(temp, limiter, ft_strlen(limiter)))
+			break ;
+		ft_putstr_fd(temp, fd[1]);
+		free(temp);
+	}
+	free(limiter);
+	free(temp);
+	close(fd[1]);
+	return (fd[0]);
 }
