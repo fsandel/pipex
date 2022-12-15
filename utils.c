@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: florian <florian@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fsandel <fsandel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/09 19:20:52 by fsandel           #+#    #+#             */
-/*   Updated: 2022/12/14 20:27:36 by florian          ###   ########.fr       */
+/*   Updated: 2022/12/15 16:15:06 by fsandel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,39 +50,22 @@ char	*read_file(int fd)
 void	input_test(int argc, char *argv[])
 {
 	if ((argc != 5) && (BONUS == 0))
-		error_close('c', -1);
+		error_exit("4 arguments needed for mandatory part", 0, -1);
 	if (argc < 5)
-		error_close('c', -1);
+		error_exit("not enough arguments", 0, -1);
 	if (access(argv[1], R_OK) && ft_strncmp(argv[1], "here_doc", 9))
-		error_close('i', -1);
+	{
+		perror("pipex: input");
+		return ;
+	}
 	if (!ft_strncmp(argv[1], "here_doc", 9) && argc < 6)
-		error_close('b', -1);
+		error_exit("not enough arguments for here_doc", 0, -1);
 }
 
-void	error_close(char c, int fd)
+void	error_exit(char *str, int exit_code, int fd)
 {
 	if (fd > 0)
 		close(fd);
-	write(2, "Error\n", 6);
-	if (c == 'p')
-		perror("piping failed\n");
-	else if (c == 'f')
-		perror("forking failed\n");
-	else if (c == 'c')
-		perror("wrong amount of arguments\n");
-	else if (c == 'i')
-		perror("no access to infile");
-	else if (c == 'o')
-		perror("no access to outfile");
-	else if (c == 'e')
-		perror("execute failed");
-	else if (c == 'b')
-		perror("not enough arguments for bonus");
-	else if (c == 't')
-		perror("couldnt create tmp file");
-	else if (c == 'F')
-		perror("open of input failed");
-	else
-		perror("random error");
-	exit(1);
+	perror(str);
+	exit(exit_code);
 }

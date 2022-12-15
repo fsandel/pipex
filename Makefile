@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: florian <florian@student.42.fr>            +#+  +:+       +#+         #
+#    By: fsandel <fsandel@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/08 09:53:10 by fsandel           #+#    #+#              #
-#    Updated: 2022/12/14 20:56:45 by florian          ###   ########.fr        #
+#    Updated: 2022/12/15 16:18:31 by fsandel          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,9 @@ CC				= cc
 RM				= rm -f
 CFLAGS			= -Wall -Wextra -Werror
 
-DEFINITIONS		=-D BONUS=0
+DEFINITIONS		=-D BONUS=
+
+BONUS			=0
 
 OBJ				= $(SRC:.c=.o)
 
@@ -31,16 +33,16 @@ HDR				= pipex.h
 
 all:			$(LIBFT) $(NAME)
 
-bonus: make change_def $(LIBFT) $(NAME)
+bonus: change_def $(LIBFT) $(NAME)
 
 change_def:
-				$(MAKE) DEFINITIONS="-D BONUS=1"
+				$(MAKE) BONUS=1
 
 $(NAME):$(OBJ)
-	$(CC) $(OBJ) $(LIBFT) -o $@ $(CFLAGS) $(DEFINITIONS)
+	$(CC) $(OBJ) $(LIBFT) -o $@ $(CFLAGS) $(DEFINITIONS)$(BONUS)
 
 $(OBJ):$(SRC) $(HDR)
-	$(CC) -c $(SRC) $(CFLAGS) $(DEFINITIONS)
+	$(CC) -c $(SRC) $(CFLAGS) $(DEFINITIONS)$(BONUS)
 
 clean:
 				@$(RM) $(OBJ)
