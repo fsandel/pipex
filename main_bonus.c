@@ -1,24 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   main_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fsandel <fsandel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/03 16:32:58 by fsandel           #+#    #+#             */
-/*   Updated: 2022/12/16 10:49:09 by fsandel          ###   ########.fr       */
+/*   Updated: 2022/12/16 10:38:39 by fsandel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
 int	main(int argc, char *argv[], char **env)
 {
 	int	in_out[2];
 
 	input_test(argc, argv);
-	in_out[0] = open(argv[1], O_RDONLY);
-	in_out[1] = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 00644);
+	if (!ft_strncmp(argv[1], "here_doc", 9))
+	{
+		in_out[0] = here_doc(argv);
+		in_out[1] = open(argv[argc - 1],
+				O_WRONLY | O_APPEND | O_CREAT, 00644);
+	}
+	else
+	{
+		in_out[0] = open(argv[1], O_RDONLY);
+		in_out[1] = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 00644);
+	}
 	pipex(argc, argv, in_out, env);
 	waitpid(0, NULL, 0);
 	close(in_out[1]);
@@ -28,8 +37,13 @@ int	main(int argc, char *argv[], char **env)
 void	pipex(int argc, char *argv[], int in_out[2], char **env)
 {
 	int		i;
+	int		here_doc;
 
-	i = 2;
+	if (!ft_strncmp(argv[1], "here_doc", 9))
+		here_doc = 1;
+	else
+		here_doc = 0;
+	i = 2 + here_doc;
 	while (i < argc - 1)
 	{
 		in_out[0] = execute_child(in_out, argv[i], env, argc - i);
